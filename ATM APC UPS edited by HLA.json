@@ -1,0 +1,630 @@
+{
+    "zabbix_export": {
+        "version": "7.2",
+        "template_groups": [
+            {
+                "uuid": "0e68f753bc604f5d9d04717f95042762",
+                "name": "APC"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "101e88616eb64af4a781509efaa18c82",
+                "template": "ATM APC UPS edited by HLA",
+                "name": "ATM APC UPS edited by HLA",
+                "groups": [
+                    {
+                        "name": "APC"
+                    }
+                ],
+                "items": [
+                    {
+                        "uuid": "5bebb4d0cce2492f9a9cdba0a8d8f2db",
+                        "name": "APC: ICMP ping",
+                        "type": "SIMPLE",
+                        "key": "icmpping",
+                        "history": "7d",
+                        "trends": "60d",
+                        "triggers": [
+                            {
+                                "uuid": "cf6983874a98421faf80615cce1d66d8",
+                                "expression": "max(/ATM APC UPS edited by HLA/icmpping,30m)=0",
+                                "name": "UPS: {HOSTNAME} ATM \u1005\u1000\u103a\u1014\u103e\u1004\u1037\u103a Connection \u1019\u101b\u1016\u103c\u1005\u103a\u1014\u1031\u101e\u100a\u103a\u1019\u103e\u102c \u1019\u102d\u1014\u1005\u103a \u1043\u1040 \u1000\u103b\u1031\u102c\u103a\u1014\u1031\u1015\u102b\u1015\u103c\u102e\u104b",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "bb9c1554f1344970904c914127ad3714",
+                        "name": "APC: Communication Status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "iso.3.6.1.4.1.318.1.1.1.8.1.0",
+                        "key": "ups.CommStatus[upsCommStatus]",
+                        "history": "20d",
+                        "value_type": "FLOAT",
+                        "trends": "60d",
+                        "description": "MIB: PowerNet-MIB\n      ok(1),\n      noComm(2)\n\"The status of agent's communication with UPS. \"",
+                        "valuemap": {
+                            "name": "upsCommStatus"
+                        },
+                        "triggers": [
+                            {
+                                "uuid": "33ecc058eec045e6ba683d7cbeb4ee87",
+                                "expression": "last(/ATM APC UPS edited by HLA/ups.CommStatus[upsCommStatus])=2",
+                                "name": "UPS: Check USB/Serial Cable between UPS & ATM on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "3aafa6b4b78f4381981459dc58893af1",
+                        "name": "APC: Battery Capacity",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.2.1.0",
+                        "key": "upsAdvBatteryCapacity",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "%",
+                        "triggers": [
+                            {
+                                "uuid": "901984f3a12f45fb89438230a29dc31b",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvBatteryCapacity)<50 and (time() > 070000 and time() < 200000)",
+                                "name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1}  < 50 %) on {HOSTNAME}",
+                                "event_name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1}  < 50 %) on {HOSTNAME}",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "HIGH"
+                            },
+                            {
+                                "uuid": "e331be877d2040cf94e67bbf87777522",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvBatteryCapacity)<80 and (time() > 070000 and time() < 200000)",
+                                "name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1}  < 80 %) on {HOSTNAME}",
+                                "event_name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1}  < 80 %) on {HOSTNAME}",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "0758174ee0f042859a7a70cb2746d6fc",
+                        "name": "APC: Battery Temperature",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.2.2.0",
+                        "key": "upsAdvBatteryTemperature",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "\u2103",
+                        "triggers": [
+                            {
+                                "uuid": "47cc88bb32b648f28bf4a68b6a149ebf",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvBatteryTemperature)>30",
+                                "name": "UPS: High temperature.",
+                                "event_name": "UPS: High temperature  {ITEM.LASTVALUE} > 30 \u2103 on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "HIGH"
+                            },
+                            {
+                                "uuid": "934543e19dc04fbba9a25e9b1c69c926",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvBatteryTemperature)>50",
+                                "name": "UPS: Very High Temperature",
+                                "event_name": "UPS: Very High Temperature {ITEM.LASTVALUE} \u2103 > 50 \u2103 on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "7b90d625e2944e84a7bd7377c2c1daf2",
+                        "name": "APC: Environment Temp",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.10.2.3.2.1.4.1",
+                        "key": "upsAdvEnvironmentTemp",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "\u2103"
+                    },
+                    {
+                        "uuid": "06573026889b480a90212d566660ab69",
+                        "name": "APC:  Input Frequency",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.3.2.4.0",
+                        "key": "upsAdvInputFrequency",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "Hz",
+                        "triggers": [
+                            {
+                                "uuid": "6a110f41ace14859b17a62b7baf83002",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvInputFrequency)>70",
+                                "name": "UPS: Input Frequency HIGH",
+                                "event_name": "UPS: Input Frequency HIGH {ITEM.LASTVALUE1} Hz on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "a25fd3985a314e28869418ed99ef12fe",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvInputFrequency)>0 and last(/ATM APC UPS edited by HLA/upsAdvInputFrequency)<45",
+                                "name": "UPS: Input Frequency LOW",
+                                "event_name": "UPS: Input Frequency LOW {ITEM.LASTVALUE1} Hz on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "bdee969e38044a338976437168a6f3b7",
+                        "name": "APC: Input Voltage",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.3.2.1.0",
+                        "key": "upsAdvInputVoltage",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "V",
+                        "triggers": [
+                            {
+                                "uuid": "400e77912d4340468147c9a84f9a905f",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvInputVoltage)>240",
+                                "name": "UPS: Input Voltage HIGH.",
+                                "event_name": "UPS: Input Voltage HIGH {ITEM.LASTVALUE1} V on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "b67b352a2e1e485fbc9b0bc213930baf",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvInputVoltage)>0 and last(/ATM APC UPS edited by HLA/upsAdvInputVoltage)<180",
+                                "name": "UPS: Input Voltage LOW on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "ff3a3b6cba734eb2bb7f1f9a1ba8cf21",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvInputVoltage)=0",
+                                "name": "UPS: No Power to UPS on {HOSTNAME}.",
+                                "event_name": "UPS: No Power to UPS on {HOSTNAME}. CHECK Input Power, Power Cable & USB/Serical Cables.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "28e79ec593d94952a36114295a9ebfe7",
+                        "name": "APC: Load Current (Amps)",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.4.2.4.0",
+                        "key": "upsAdvOutputCurrent",
+                        "delay": "30",
+                        "history": "20d",
+                        "value_type": "FLOAT",
+                        "trends": "60d",
+                        "units": "Amps"
+                    },
+                    {
+                        "uuid": "aa02d6fe88814598be7fd8aad24c9350",
+                        "name": "APC: Output Frequency",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.4.2.2.0",
+                        "key": "upsAdvOutputFrequency",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "Hz"
+                    },
+                    {
+                        "uuid": "31a03cf1409a495a9d741b9416fc0a5d",
+                        "name": "APC: Output Load (%)",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.4.2.3.0",
+                        "key": "upsAdvOutputLoad",
+                        "delay": "30",
+                        "history": "20d",
+                        "value_type": "FLOAT",
+                        "trends": "60d",
+                        "units": "%",
+                        "triggers": [
+                            {
+                                "uuid": "91800937ddb14de7b461a983d2b75bdd",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvOutputLoad)>70",
+                                "name": "UPS: Output Load Too HIGH",
+                                "event_name": "UPS: Output Load Too HIGH {ITEM.LASTVALUE1}% on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "HIGH"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "4b129c840d9248bcba68f9263eb58704",
+                        "name": "APC: Output Voltage",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.4.2.1.0",
+                        "key": "upsAdvOutputVoltage",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "V"
+                    },
+                    {
+                        "uuid": "b2b641e010c240aa8d00d888866d4ed0",
+                        "name": "APC: Replace Battery Indicator",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.2.4.0",
+                        "key": "upsAdvReplaceBatteryIndicator",
+                        "delay": "600",
+                        "history": "20d",
+                        "trends": "60d",
+                        "triggers": [
+                            {
+                                "uuid": "ec133213341a42498201b87f8955ff49",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsAdvReplaceBatteryIndicator)<>1",
+                                "name": "UPS: Replace Battery  on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "22adae2f11824617a56cf7445f8441c9",
+                        "name": "APC: Run Time Remaining",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.2.3.0",
+                        "key": "upsAdvRunTimeRemaining",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "s",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "0.01"
+                                ]
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "6462dbada4fc44c4bb5411c1b1e24cd6",
+                                "expression": "max(/ATM APC UPS edited by HLA/upsAdvRunTimeRemaining,60s)<300",
+                                "name": "UPS: Battery time left:{ITEM.LASTVALUE} <300 sec. on {HOSTNAME}",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "1d7070d894774351bb1a14ea84b5cf7f",
+                                "expression": "max(/ATM APC UPS edited by HLA/upsAdvRunTimeRemaining,120s)<600",
+                                "name": "UPS: Battery time left:{ITEM.LASTVALUE} <600 sec on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "HIGH"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "49059a868d844fe8a04a66a036f3fd2c",
+                        "name": "APC: Battery Status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.1.1.0",
+                        "key": "upsBasicBatteryStatus",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "triggers": [
+                            {
+                                "uuid": "461b28353fb34c1f8b3b9eb57473db02",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsBasicBatteryStatus)<>2 and (time() > 070000 and time() < 200000)",
+                                "name": "UPS: Battery in not OK!!!",
+                                "event_name": "UPS: Battery in not OK!!! {ITEM.LASTVALUE1} on {HOSTNAME}",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "4fb5a4f85e9448ba8fdafec84ffd21f5",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsBasicBatteryStatus)=3",
+                                "name": "UPS: Battery is Low",
+                                "event_name": "UPS: Battery is Low  {ITEM.LASTVALUE1} on {HOSTNAME}",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "fab5d068804545bc8cf2c821feec66e4",
+                        "name": "APC: Time On Battery",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.2.1.2.0",
+                        "key": "upsBasicBatteryTimeOnBattery",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "units": "s",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "0.01"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "e5df60c1d6d043df98d0106bfa49d2f2",
+                        "name": "APC: Basic Output Status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": ".1.3.6.1.4.1.318.1.1.1.4.1.1.0",
+                        "key": "upsBasicOutputStatus",
+                        "delay": "30",
+                        "history": "20d",
+                        "trends": "60d",
+                        "valuemap": {
+                            "name": "upsBasicOutputStatus"
+                        },
+                        "triggers": [
+                            {
+                                "uuid": "b81f47434d914adbb5ecaa0491665a51",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsBasicOutputStatus)=3",
+                                "name": "UPS: Running on BATTERY!!!",
+                                "event_name": "UPS: Running on BATTERY!!!  {ITEM.LASTVALUE1} on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "HIGH"
+                            },
+                            {
+                                "uuid": "108761c7a9f34f36894d3cee6899533a",
+                                "expression": "last(/ATM APC UPS edited by HLA/upsBasicOutputStatus)=1",
+                                "name": "UPS: UNKNOWN Error!!!",
+                                "event_name": "UPS: UNKNOWN Error!!! ATM \u1005\u1000\u103a Down \u1010\u102c \u1016\u103c\u1005\u103a\u1014\u102d\u102f\u1004\u103a\u101e\u100a\u103a\u104b  on {HOSTNAME}.",
+                                "opdata": "{ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    }
+                ],
+                "valuemaps": [
+                    {
+                        "uuid": "d3bdecda0f294faaa456d25dba1f89a5",
+                        "name": "upsBasicOutputStatus",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "Unknown"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "on Line"
+                            },
+                            {
+                                "value": "3",
+                                "newvalue": "on Battery"
+                            },
+                            {
+                                "value": "4",
+                                "newvalue": "onSmartBoost"
+                            },
+                            {
+                                "value": "5",
+                                "newvalue": "timedSleeping"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "softwareBypass"
+                            },
+                            {
+                                "value": "7",
+                                "newvalue": "Off"
+                            },
+                            {
+                                "value": "8",
+                                "newvalue": "Rebooting"
+                            },
+                            {
+                                "value": "9",
+                                "newvalue": "switchedBypass"
+                            },
+                            {
+                                "value": "10",
+                                "newvalue": "hardwareFailureBypass"
+                            },
+                            {
+                                "value": "11",
+                                "newvalue": "sleepingUntilPowerReturn"
+                            },
+                            {
+                                "value": "12",
+                                "newvalue": "onSmartTrim"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "7c02449b369e4bcda04fbf15a1cab640",
+                        "name": "upsCommStatus",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "OK"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "No Comm"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "665f3d4084904b88ab7d0744270f8017",
+                        "name": "zabbix.host.available",
+                        "mappings": [
+                            {
+                                "value": "0",
+                                "newvalue": "Not Available"
+                            },
+                            {
+                                "value": "1",
+                                "newvalue": "Available"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "Unknown"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "graphs": [
+            {
+                "uuid": "b0d47880241c4c6495bf1112d78c7f18",
+                "name": "APC Smart UPS Ampers",
+                "yaxismax": "20",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "FIXED",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "00C800",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvOutputCurrent"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "75116182b6b14225bfd1642e3a978f42",
+                "name": "APC Smart UPS Battery Capacity (%)",
+                "yaxismax": "120",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "FIXED",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "0000DD",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvBatteryCapacity"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "e77c3df7829547e1b74027bdbb0912d2",
+                "name": "APC Smart UPS Battery Temp",
+                "yaxismax": "50",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "FIXED",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "00EE00",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvBatteryTemperature"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "85298ab56b6942178948493bea957f83",
+                "name": "APC Smart UPS  Environment Temp",
+                "yaxismax": "50",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "FIXED",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "00C800",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvEnvironmentTemp"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "4afb72fb95c4433c9e6e42fd138090b5",
+                "name": "APC Smart UPS Frequency",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "00CCCC",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvInputFrequency"
+                        }
+                    },
+                    {
+                        "sortorder": "1",
+                        "drawtype": "BOLD_LINE",
+                        "color": "C80000",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvOutputFrequency"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "f8951ac63aa44068b8f806428fa4b6f2",
+                "name": "APC Smart UPS Load",
+                "ymin_type_1": "FIXED",
+                "ymax_type_1": "FIXED",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "BB00BB",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvOutputLoad"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "da94b33bc89744d89e888e01c4258787",
+                "name": "APC Smart UPS Runtime",
+                "show_work_period": "NO",
+                "graph_items": [
+                    {
+                        "color": "EE0000",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsBasicBatteryTimeOnBattery"
+                        }
+                    },
+                    {
+                        "sortorder": "1",
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "00BB00",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvRunTimeRemaining"
+                        }
+                    }
+                ]
+            },
+            {
+                "uuid": "9985cf8d640347c3838b530521b2f5a1",
+                "name": "APC Smart UPS Voltage",
+                "graph_items": [
+                    {
+                        "drawtype": "GRADIENT_LINE",
+                        "color": "CCCC00",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvInputVoltage"
+                        }
+                    },
+                    {
+                        "sortorder": "1",
+                        "drawtype": "BOLD_LINE",
+                        "color": "C80000",
+                        "item": {
+                            "host": "ATM APC UPS edited by HLA",
+                            "key": "upsAdvOutputVoltage"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

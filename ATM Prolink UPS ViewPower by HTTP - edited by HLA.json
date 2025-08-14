@@ -1,0 +1,534 @@
+{
+    "zabbix_export": {
+        "version": "7.2",
+        "template_groups": [
+            {
+                "uuid": "009d29fc0b014ef68562790e73006936",
+                "name": "Customized template"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "a10eddb4c4a54d31bc91e183c6c2d15f",
+                "template": "ATM Prolink UPS ViewPower by HTTP - edited by HLA",
+                "name": "ATM Prolink UPS ViewPower by HTTP - edited by HLA",
+                "groups": [
+                    {
+                        "name": "Customized template"
+                    }
+                ],
+                "items": [
+                    {
+                        "uuid": "d0b0f00b92414bb5880c672961b2c2f0",
+                        "name": "UPS: Workstatus",
+                        "type": "HTTP_AGENT",
+                        "key": "viewpower.workstatus",
+                        "history": "30d",
+                        "value_type": "TEXT",
+                        "url": "http://{HOST.IP}:{$UPS.PORT}/ViewPower/workstatus/reqMonitorData"
+                    },
+                    {
+                        "uuid": "1684d22277894d308260fc3db571de34",
+                        "name": "UPS: Version",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.version",
+                        "history": "30d",
+                        "value_type": "TEXT",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.version"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        }
+                    },
+                    {
+                        "uuid": "8c50d2f6ff54440bb34c8665ea093290",
+                        "name": "UPS: Battery Capacity",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.batteryCapacity",
+                        "history": "30d",
+                        "trends": "30d",
+                        "units": "%",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.batteryCapacity"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Battery"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "8937175932b9451ab5b2ea913a12b8c0",
+                        "name": "UPS: Battery Remain Time",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.batteryRemainTime",
+                        "history": "30d",
+                        "trends": "30d",
+                        "units": "m",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.batteryRemainTime"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Battery"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "db9bcfdb106844c6bfa38651d1c5a4a0",
+                        "name": "UPS: Battery Voltage",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.batteryVoltage",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.batteryVoltage"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Battery"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "73f3ceca25ff490daab23717e37e0f8d",
+                        "name": "UPS: Bypass Active",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.bypassActive",
+                        "history": "30d",
+                        "value_type": "TEXT",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.bypassActive"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "UPS"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "7945a408441943cfae50a9b0b0ba9554",
+                        "name": "UPS: Input Frequency",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.inputFrequency",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.inputFrequency"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Input"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "48db0d7c6d2945d983e86074420bb03a",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputFrequency)>70",
+                                "name": "UPS: Input Frequency HIGH",
+                                "event_name": "UPS: Input Frequency HIGH  {ITEM.LASTVALUE1} Hz on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "95b5ea9fb4e74005932b5c82a9d75784",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputFrequency)>0 and last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputFrequency)<45",
+                                "name": "UPS: Input Frequency LOW",
+                                "event_name": "UPS: Input Frequency LOW  {ITEM.LASTVALUE1} Hz on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "0c47deebff834bc1b491024b2ffdd386",
+                        "name": "UPS: Input Voltage",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.inputVoltage",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.inputVoltage"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Input"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "056110913c8e463c8eca25256e995fe9",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)>240",
+                                "name": "UPS: Input Voltage HIGH",
+                                "event_name": "UPS: Input Voltage HIGH  {ITEM.LASTVALUE1} V on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "c4bcbd282cf74ee4b7b30326ab52e511",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)>0 and last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<180",
+                                "name": "UPS: Input Voltage LOW",
+                                "event_name": "UPS: Input Voltage LOW  {ITEM.LASTVALUE1} V on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "b3b89b4e23974bcb88d82a0b0c1ca6ca",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)=0",
+                                "name": "UPS: No Power to UPS",
+                                "event_name": "UPS: No Power to UPS on {HOSTNAME}. CHECK Input Power, Power Cable & USB/Serical Cables.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER",
+                                "manual_close": "YES"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "a40e105932ee4f16a0e4e870ab2e8920",
+                        "name": "UPS: Morphological",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.morphological",
+                        "history": "30d",
+                        "value_type": "TEXT",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.morphological"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "UPS"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "4334cacc371c4d8a992cf3af7da719e6",
+                        "name": "UPS: Output Current",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.outputCurrent",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.outputCurrent"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Output"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "94dcc1e0792142b69e20fe846f1bc487",
+                        "name": "UPS: Output Frequency",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.outputFrequency",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.outputFrequency"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Output"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "8833b8bae70747488e7bf60ff9d3c685",
+                        "name": "UPS: Output Load Percent",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.outputLoadPercent",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "units": "%",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.outputLoadPercent"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Output"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "14a265eb4d9042d795370e8922faca0b",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputLoadPercent)>70",
+                                "name": "UPS: Output Load Too HIGH",
+                                "event_name": "UPS: Output Load Too HIGH  {ITEM.LASTVALUE1}% on {HOSTNAME}.",
+                                "opdata": "Current: {ITEM.LASTVALUE1}",
+                                "priority": "HIGH",
+                                "manual_close": "YES"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "772afdec71424d46a57ee5d13ca0a2b7",
+                        "name": "UPS: Output Voltage",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.outputVoltage",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.outputVoltage"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "Output"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "f3410d6e0af4470c8ebd4caf51092060",
+                        "name": "UPS: Temperature",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.temperature",
+                        "history": "30d",
+                        "value_type": "FLOAT",
+                        "trends": "30d",
+                        "units": "C",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.temperature"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "UPS"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "e8e2df7824f34f4999cc1861a48e6b11",
+                                "expression": "avg(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.temperature,5)>50",
+                                "name": "UPS: High Temperature",
+                                "event_name": "UPS: High temperature  {ITEM.LASTVALUE} > 50 \u2103 on {HOSTNAME}.",
+                                "opdata": "Current Temp: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            },
+                            {
+                                "uuid": "753af7a83cb54c6986655db17f5d42de",
+                                "expression": "avg(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.temperature,5)>{$UPS.TEMP.MAX.WARN}",
+                                "name": "UPS: Temperature is high (temp  {ITEM.LASTVALUE1} > {$UPS.TEMP.MAX.WARN} C)",
+                                "opdata": "Current Temp: {ITEM.LASTVALUE1}",
+                                "priority": "WARNING"
+                            },
+                            {
+                                "uuid": "ece922b3483f4eb19512709be0e503c3",
+                                "expression": "avg(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.temperature,5)>42",
+                                "name": "UPS: Very High Temperature",
+                                "event_name": "UPS: Very High Temperature {ITEM.LASTVALUE} \u2103 > 42 \u2103 on {HOSTNAME}.",
+                                "opdata": "Current Temp: {ITEM.LASTVALUE1}",
+                                "priority": "DISASTER"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "37437ea79c834a64bc90b8225e93774e",
+                        "name": "UPS: WorkMode",
+                        "type": "DEPENDENT",
+                        "key": "viewpower.workstatus.workInfo.workMode",
+                        "history": "30d",
+                        "value_type": "TEXT",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.workInfo.workMode"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "viewpower.workstatus"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Component",
+                                "value": "UPS"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "01b4541daa324ecc943463481b33e0b4",
+                                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.workMode)=\"Battery mode\"",
+                                "name": "UPS: Running on BATTERY!!!",
+                                "event_name": "UPS: Running on BATTERY!!!  {ITEM.LASTVALUE1} on {HOSTNAME}.",
+                                "priority": "HIGH"
+                            }
+                        ]
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$UPS.CAP.MAX.WARN}",
+                        "value": "80"
+                    },
+                    {
+                        "macro": "{$UPS.PORT}",
+                        "value": "15178"
+                    },
+                    {
+                        "macro": "{$UPS.TEMP.MAX.WARN}",
+                        "value": "40"
+                    }
+                ]
+            }
+        ],
+        "triggers": [
+            {
+                "uuid": "79d8794b135d49e6bd0b6d765417aea5",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<{$UPS.CAP.MAX.WARN}\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)<>0",
+                "name": "UPS: Battery Capacity is low (capacity < {$UPS.CAP.MAX.WARN} %)",
+                "priority": "WARNING"
+            },
+            {
+                "uuid": "ab045f46bb7341f49b9628c841d1d7f6",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<50\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)<>0",
+                "name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1} < 50 %) on {HOSTNAME}",
+                "priority": "DISASTER"
+            },
+            {
+                "uuid": "6edd0eab56f340d2ad2b745f8b712cff",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<80\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)<>0",
+                "name": "UPS: Battery Capacity is low ({ITEM.LASTVALUE1} < 80 %) on {HOSTNAME}",
+                "priority": "AVERAGE"
+            },
+            {
+                "uuid": "691c4c3493504f1780af26ae3bb6cdce",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<5\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)<>0",
+                "name": "UPS: Battery time left:{ITEM.LASTVALUE} < 5 min. on {HOSTNAME}",
+                "opdata": "{ITEM.LASTVALUE}",
+                "priority": "DISASTER"
+            },
+            {
+                "uuid": "952c6abe4fa441a493162e58189022fa",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<10\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)<>0\nand\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)<>0",
+                "name": "UPS: Battery time left:{ITEM.LASTVALUE} < 10 min. on {HOSTNAME}",
+                "opdata": "{ITEM.LASTVALUE}",
+                "priority": "HIGH"
+            },
+            {
+                "uuid": "22b9173ae6714eaf86b9d3f3d2862bb2",
+                "expression": "last(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryCapacity)=0 and\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.batteryRemainTime)=0 and\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.inputVoltage)=0 and\nlast(/ATM Prolink UPS ViewPower by HTTP - edited by HLA/viewpower.workstatus.workInfo.outputVoltage)=0",
+                "name": "UPS: Check USB/Serial Cable between UPS & ATM on {HOSTNAME}.",
+                "priority": "WARNING"
+            }
+        ]
+    }
+}
